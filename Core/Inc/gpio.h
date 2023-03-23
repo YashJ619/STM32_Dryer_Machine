@@ -60,7 +60,7 @@ extern "C" {
 void MX_GPIO_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+uint8_t is_key_pressed(uint16_t Pin);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

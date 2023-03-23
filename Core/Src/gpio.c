@@ -91,6 +91,8 @@ void EXTI0_IRQHandler(void)
 
 void keypad_init(void)
 {
+	 __HAL_RCC_GPIOB_CLK_ENABLE();
+
 	GPIO_InitTypeDef GPIOx = {0};
 
 	GPIOx.Pin = LOW_KEY | MED_KEY | HIGH_KEY | FN_KEY;
@@ -99,5 +101,12 @@ void keypad_init(void)
 	GPIOx.Speed = GPIO_SPEED_FREQ_LOW;
 
 	HAL_GPIO_Init(KEYPAD_PORT, &GPIOx);
+}
+
+uint8_t is_key_pressed(uint16_t Pin)
+{
+	static uint8_t temp = 0;
+	temp = HAL_GPIO_ReadPin(KEYPAD_PORT, Pin);
+	return !temp;
 }
 /* USER CODE END 2 */

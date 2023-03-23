@@ -106,15 +106,29 @@ int main(void)
 
 	  if(!door_open_flag)
 	  {
-		  HAL_UART_Transmit(&huart1, (uint8_t*)"Door Close\r\n", sizeof("Door Close\r\n"), 10);
+		  //HAL_UART_Transmit(&huart1, (uint8_t*)"Door Close\r\n", sizeof("Door Close\r\n"), 10);
 		  HAL_GPIO_WritePin(GPIOC, LED, HIGH);
 
-		  if()
-
+		  if(is_key_pressed(LOW_KEY))
+		  {
+			  HAL_UART_Transmit(&huart1, (uint8_t*)"LOW KEY PRESSED\r\n", sizeof("LOW KEY PRESSED\r\n"), 10);
+		  }
+		  else if(is_key_pressed(MED_KEY))
+		  {
+			  HAL_UART_Transmit(&huart1, (uint8_t*)"MED KEY PRESSED\r\n", sizeof("MED KEY PRESSED\r\n"), 10);
+		  }
+		  else if(is_key_pressed(HIGH_KEY))
+		  {
+			  HAL_UART_Transmit(&huart1, (uint8_t*)"HIGH KEY PRESSED\r\n", sizeof("HIGH KEY PRESSED\r\n"), 10);
+		  }
+		  else if(is_key_pressed(FN_KEY))
+		  {
+			  HAL_UART_Transmit(&huart1, (uint8_t*)"FN KEY PRESSED\r\n", sizeof("FN KEY PRESSED\r\n"), 10);
+		  }
 	  }
 	  else
 	  {
-		  HAL_UART_Transmit(&huart1, (uint8_t*)"Door Open\r\n", sizeof("Door Open\r\n"), 10);
+		  //HAL_UART_Transmit(&huart1, (uint8_t*)"Door Open\r\n", sizeof("Door Open\r\n"), 10);
 		  HAL_GPIO_WritePin(GPIOC, LED, LOW);
 	  }
   }
