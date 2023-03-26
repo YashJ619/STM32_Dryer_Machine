@@ -10,6 +10,7 @@
 
 #include"stm32f1xx_hal.h"
 #include "usart.h"
+#include "stdio.h"
 
 #define LOW_KEY				GPIO_PIN_1
 #define MED_KEY				GPIO_PIN_11

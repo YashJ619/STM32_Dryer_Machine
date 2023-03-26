@@ -29,12 +29,19 @@ typedef enum
 	HIGH_LEVEL
 }ModeTypeDef_t;
 
+enum
+{
+	HEAT_CYCLE,
+	COOL_CYCLE,
+};
+
 typedef struct
 {
 	StateTypeDef_t state;
 	ModeTypeDef_t mode;
 	uint16_t heatTime;
 	uint16_t coolTime;
+	uint8_t cycle;
 }MachineInit_t;
 
 extern MachineInit_t dryer;

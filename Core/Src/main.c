@@ -1,20 +1,20 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2023 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2023 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -24,7 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "machine.h"
-
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,182 +59,219 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+int __io_putchar(int ch) {
+	HAL_UART_Transmit(&huart1, (uint8_t*) &ch, 1, 10);
+	return ch;
+}
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
-  /* USER CODE BEGIN 1 */
+ * @brief  The application entry point.
+ * @retval int
+ */
+int main(void) {
+	/* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
+	/* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+	/* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
 
-  /* USER CODE BEGIN Init */
+	/* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+	/* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+	/* Configure the system clock */
+	SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+	/* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+	/* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART1_UART_Init();
+	/* Initialize all configured peripherals */
+	MX_GPIO_Init();
+	MX_USART1_UART_Init();
 
-  /* USER CODE BEGIN 2 */
-  gpio_init();
-  keypad_init();
+	/* USER CODE BEGIN 2 */
+	gpio_init();
+	keypad_init();
 
-  HAL_UART_Transmit(&huart1, (uint8_t*)"HELLO\r\n", sizeof("HELLO\r\n"), 10);
-  dryer.state = INIT;
-  dryer.mode = NO_MODE;
+	//HAL_UART_Transmit(&huart1, (uint8_t*)"HELLO\r\n", sizeof("HELLO\r\n"), 10);
+	printf("Hello\r\n");
+	dryer.state = INIT;
+	dryer.mode = NO_MODE;
 
-  /* USER CODE END 2 */
+	/* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-    /* USER CODE BEGIN 3 */
+	/* Infinite loop */
+	/* USER CODE BEGIN WHILE */
+	while (1) {
+		/* USER CODE END WHILE */
+		/* USER CODE BEGIN 3 */
 
-	  if(!door_open_flag)
-	  {
-		  //do something
-		  //HAL_UART_Transmit(&huart1, (uint8_t*)"Door Close\r\n", sizeof("Door Close\r\n"), 10);
-		  HAL_GPIO_WritePin(GPIOC, LED, HIGH);
-		  //scaned_key = scan_keypad();
+		if (!door_open_flag) {
+			//do something
 
-		  if(dryer.state == START)
-		  {
-			  switch(scan_keypad()) {
-			  case LOW_KEY_PRESSED:
-				  dryer.heatTime -= 1U;
-				break;
-			  case MED_KEY_PRESSED:
-				  dryer.state = STOP;
-				break;
-			  case HIGH_KEY_PRESSED:
-				  dryer.heatTime += 1U;
-				break;
-			  }
-		  }
-		  else if(dryer.state == INIT)
-		  {
-			  //scaned_key = scan_keypad();
-			  switch (scan_keypad()) {
-			  case LOW_KEY_PRESSED:
-				  dryer.mode = LOW_LEVEL;
-				  dryer.state = START;
-				  dryer.heatTime = 600U;
-				  dryer.coolTime = 300U;
-				  HAL_UART_Transmit(&huart1, (uint8_t*)"LOW_LEVEL\r\n", sizeof("LOW_LEVEL\r\n"), 10);
-				break;
-			  case MED_KEY_PRESSED:
-				  dryer.mode = MED_LEVEL;
-				  dryer.state = START;
-				  dryer.heatTime = 900U;
-				  dryer.coolTime = 600U;
-				  HAL_UART_Transmit(&huart1, (uint8_t*)"MED_LEVEL\r\n", sizeof("MED_LEVEL\r\n"), 10);
-				break;
-			  case HIGH_KEY_PRESSED:
-				  dryer.mode = HIGH_LEVEL;
-				  dryer.state = START;
-				  dryer.heatTime = 1800U;
-				  dryer.coolTime = 900U;
-				  HAL_UART_Transmit(&huart1, (uint8_t*)"HIGH_LEVEL\r\n", sizeof("HIGH_LEVEL\r\n"), 10);
-				break;
-			default:
-				break;
-			  }
+			//printf("Door Close\r\n");
+
+			HAL_GPIO_WritePin(GPIOC, LED, HIGH);
+			//scaned_key = scan_keypad();
+
+			if (dryer.state == START) {
+				scaned_key = scan_keypad();
+				switch (scaned_key) {
+				case LOW_KEY_PRESSED:
+					switch (dryer.cycle) {
+					case HEAT_CYCLE:
+						if (dryer.heatTime > 60U)
+							dryer.heatTime -= 60U;
+						printf("HeatTime = %d\r\n", dryer.heatTime);
+						break;
+					case COOL_CYCLE:
+						if (dryer.coolTime > 60U)
+							dryer.coolTime -= 60U;
+						printf("CoolTime = %d\r\n", dryer.coolTime);
+						break;
+					}
+					break;
+				case MED_KEY_PRESSED:
+					dryer.state = INIT;
+					break;
+				case HIGH_KEY_PRESSED:
+					switch (dryer.cycle) {
+					case HEAT_CYCLE:
+						if ((dryer.heatTime < 1800U)
+								&& (dryer.mode == LOW_LEVEL))
+							dryer.heatTime += 60U;
+						else if ((dryer.heatTime < 2400U)
+								&& (dryer.mode == MED_LEVEL))
+							dryer.heatTime += 60U;
+						else if ((dryer.heatTime < 3000U)
+								&& (dryer.mode == HIGH_LEVEL))
+							dryer.heatTime += 60U;
+						printf("HeatTime = %d\r\n", dryer.heatTime);
+						break;
+					case COOL_CYCLE:
+						if (dryer.coolTime < 900U)
+							dryer.coolTime += 60U;
+						printf("CoolTime = %d\r\n", dryer.coolTime);
+						break;
+					}
+					break;
+				case FN_KEY_PRESSED:
+					dryer.heatTime = 0U;
+					dryer.cycle = COOL_CYCLE;
+					printf("HeatTime = %d\r\n",dryer.heatTime);
+					printf("CoolTime = %d\r\n",dryer.coolTime);
+					break;
+				}
+				scaned_key = NO_KEY_PRESSED;
+			} else if (dryer.state == INIT) {
+				scaned_key = scan_keypad();
+				switch (scaned_key) {
+				case LOW_KEY_PRESSED:
+					dryer.mode = LOW_LEVEL;
+					dryer.state = START;
+					dryer.heatTime = 600U;
+					dryer.coolTime = 300U;
+					dryer.cycle = HEAT_CYCLE;
+					HAL_UART_Transmit(&huart1, (uint8_t*) "LOW_LEVEL\r\n",
+							sizeof("LOW_LEVEL\r\n"), 10);
+					break;
+				case MED_KEY_PRESSED:
+					dryer.mode = MED_LEVEL;
+					dryer.state = START;
+					dryer.heatTime = 1200U;
+					dryer.coolTime = 300U;
+					dryer.cycle = HEAT_CYCLE;
+					HAL_UART_Transmit(&huart1, (uint8_t*) "MED_LEVEL\r\n",
+							sizeof("MED_LEVEL\r\n"), 10);
+					break;
+				case HIGH_KEY_PRESSED:
+					dryer.mode = HIGH_LEVEL;
+					dryer.state = START;
+					dryer.heatTime = 1800U;
+					dryer.coolTime = 300U;
+					dryer.cycle = HEAT_CYCLE;
+					HAL_UART_Transmit(&huart1, (uint8_t*) "HIGH_LEVEL\r\n",
+							sizeof("HIGH_LEVEL\r\n"), 10);
+					break;
+				default:
+					break;
+				}
+				scaned_key = NO_KEY_PRESSED;
+			}
+
+		} else {
+			//printf("Door Open\r\n");
+			HAL_GPIO_WritePin(GPIOC, LED, LOW);
 		}
-
-	  }
-	  else
-	  {
-		  //HAL_UART_Transmit(&huart1, (uint8_t*)"Door Open\r\n", sizeof("Door Open\r\n"), 10);
-		  HAL_GPIO_WritePin(GPIOC, LED, LOW);
-	  }
-  }
-  /* USER CODE END 3 */
+	}
+	/* USER CODE END 3 */
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ * @brief System Clock Configuration
+ * @retval None
+ */
+void SystemClock_Config(void) {
+	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	/** Initializes the RCC Oscillators according to the specified parameters
+	 * in the RCC_OscInitTypeDef structure.
+	 */
+	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+		Error_Handler();
+	}
 
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+	/** Initializes the CPU, AHB and APB buses clocks
+	 */
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK) {
+		Error_Handler();
+	}
 
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	otp = 1;
-	if(GPIO_Pin == DOOR_SW)
-	{
+	if (GPIO_Pin == DOOR_SW) {
 		uint8_t temp = HAL_GPIO_ReadPin(INPUT_PORT, DOOR_SW);
 
-		if(temp == HIGH)door_open_flag = 1;
-		else door_open_flag = 0;
+		if (temp == HIGH)
+			door_open_flag = 1;
+		else
+			door_open_flag = 0;
 	}
 }
 
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
+void Error_Handler(void) {
+	/* USER CODE BEGIN Error_Handler_Debug */
+	/* User can add his own implementation to report the HAL error return state */
+	__disable_irq();
+	while (1) {
+	}
+	/* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
