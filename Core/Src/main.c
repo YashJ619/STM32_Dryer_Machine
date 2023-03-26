@@ -23,6 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "machine.h"
 
 /* USER CODE END Includes */
 
@@ -46,7 +47,7 @@
 /* USER CODE BEGIN PV */
 uint8_t door_open_flag = 0;
 uint8_t otp = 1;
-
+uint8_t scaned_key = NO_KEY_PRESSED;
 
 /* USER CODE END PV */
 
@@ -92,7 +93,12 @@ int main(void)
   MX_USART1_UART_Init();
 
   /* USER CODE BEGIN 2 */
+  gpio_init();
+  keypad_init();
+
   HAL_UART_Transmit(&huart1, (uint8_t*)"HELLO\r\n", sizeof("HELLO\r\n"), 10);
+  dryer.state = INIT;
+  dryer.mode = NO_MODE;
 
   /* USER CODE END 2 */
 
@@ -101,30 +107,59 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
 
 	  if(!door_open_flag)
 	  {
+		  //do something
 		  //HAL_UART_Transmit(&huart1, (uint8_t*)"Door Close\r\n", sizeof("Door Close\r\n"), 10);
 		  HAL_GPIO_WritePin(GPIOC, LED, HIGH);
+		  //scaned_key = scan_keypad();
 
-		  if(is_key_pressed(LOW_KEY))
+		  if(dryer.state == START)
 		  {
-			  HAL_UART_Transmit(&huart1, (uint8_t*)"LOW KEY PRESSED\r\n", sizeof("LOW KEY PRESSED\r\n"), 10);
+			  switch(scan_keypad()) {
+			  case LOW_KEY_PRESSED:
+				  dryer.heatTime -= 1U;
+				break;
+			  case MED_KEY_PRESSED:
+				  dryer.state = STOP;
+				break;
+			  case HIGH_KEY_PRESSED:
+				  dryer.heatTime += 1U;
+				break;
+			  }
 		  }
-		  else if(is_key_pressed(MED_KEY))
+		  else if(dryer.state == INIT)
 		  {
-			  HAL_UART_Transmit(&huart1, (uint8_t*)"MED KEY PRESSED\r\n", sizeof("MED KEY PRESSED\r\n"), 10);
-		  }
-		  else if(is_key_pressed(HIGH_KEY))
-		  {
-			  HAL_UART_Transmit(&huart1, (uint8_t*)"HIGH KEY PRESSED\r\n", sizeof("HIGH KEY PRESSED\r\n"), 10);
-		  }
-		  else if(is_key_pressed(FN_KEY))
-		  {
-			  HAL_UART_Transmit(&huart1, (uint8_t*)"FN KEY PRESSED\r\n", sizeof("FN KEY PRESSED\r\n"), 10);
-		  }
+			  //scaned_key = scan_keypad();
+			  switch (scan_keypad()) {
+			  case LOW_KEY_PRESSED:
+				  dryer.mode = LOW_LEVEL;
+				  dryer.state = START;
+				  dryer.heatTime = 600U;
+				  dryer.coolTime = 300U;
+				  HAL_UART_Transmit(&huart1, (uint8_t*)"LOW_LEVEL\r\n", sizeof("LOW_LEVEL\r\n"), 10);
+				break;
+			  case MED_KEY_PRESSED:
+				  dryer.mode = MED_LEVEL;
+				  dryer.state = START;
+				  dryer.heatTime = 900U;
+				  dryer.coolTime = 600U;
+				  HAL_UART_Transmit(&huart1, (uint8_t*)"MED_LEVEL\r\n", sizeof("MED_LEVEL\r\n"), 10);
+				break;
+			  case HIGH_KEY_PRESSED:
+				  dryer.mode = HIGH_LEVEL;
+				  dryer.state = START;
+				  dryer.heatTime = 1800U;
+				  dryer.coolTime = 900U;
+				  HAL_UART_Transmit(&huart1, (uint8_t*)"HIGH_LEVEL\r\n", sizeof("HIGH_LEVEL\r\n"), 10);
+				break;
+			default:
+				break;
+			  }
+		}
+
 	  }
 	  else
 	  {

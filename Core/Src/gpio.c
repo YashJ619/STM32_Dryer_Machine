@@ -29,8 +29,7 @@
 /* Configure GPIO                                                             */
 /*----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
-void input_init(void);
-void keypad_init(void);
+void gpio_init(void);
 /* USER CODE END 1 */
 
 /** Configure pins as
@@ -47,12 +46,10 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
-  input_init();
-  keypad_init();
 }
 
 /* USER CODE BEGIN 2 */
-void input_init(void)
+void gpio_init(void)
 {
 
 	GPIO_InitTypeDef GPIOx = {0};
@@ -87,26 +84,5 @@ void input_init(void)
 void EXTI0_IRQHandler(void)
 {
 	HAL_GPIO_EXTI_IRQHandler(DOOR_SW);
-}
-
-void keypad_init(void)
-{
-	 __HAL_RCC_GPIOB_CLK_ENABLE();
-
-	GPIO_InitTypeDef GPIOx = {0};
-
-	GPIOx.Pin = LOW_KEY | MED_KEY | HIGH_KEY | FN_KEY;
-	GPIOx.Mode = GPIO_MODE_INPUT;
-	GPIOx.Pull = GPIO_PULLUP;
-	GPIOx.Speed = GPIO_SPEED_FREQ_LOW;
-
-	HAL_GPIO_Init(KEYPAD_PORT, &GPIOx);
-}
-
-uint8_t is_key_pressed(uint16_t Pin)
-{
-	static uint8_t temp = 0;
-	temp = HAL_GPIO_ReadPin(KEYPAD_PORT, Pin);
-	return !temp;
 }
 /* USER CODE END 2 */

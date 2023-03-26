@@ -33,11 +33,8 @@ extern "C" {
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
-#define HIGH 			GPIO_PIN_SET
-#define LOW 			GPIO_PIN_RESET
 
 #define LED				GPIO_PIN_13
-
 
 #define DOOR_SW 			GPIO_PIN_0
 #define LIMIT_SW 			GPIO_PIN_1
@@ -46,21 +43,12 @@ extern "C" {
 
 #define INPUT_PORT			GPIOA
 
-#define LOW_KEY				GPIO_PIN_1
-#define MED_KEY				GPIO_PIN_11
-#define HIGH_KEY			GPIO_PIN_10
-#define FN_KEY				GPIO_PIN_0
-
-#define KEYPAD_PORT			GPIOB
-
-
-
 /* USER CODE END Private defines */
 
 void MX_GPIO_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-uint8_t is_key_pressed(uint16_t Pin);
+void gpio_init(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
