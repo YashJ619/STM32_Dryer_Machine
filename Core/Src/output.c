@@ -1,0 +1,37 @@
+/*
+ * output.c
+ *
+ *  Created on: Mar 27, 2023
+ *      Author: Yash
+ */
+#include "output.h"
+
+void output_init(void) {
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+
+	GPIO_InitTypeDef GPIOx = { 0 };
+
+	HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN | DRUM_RIGHT_PIN | HEATER_PIN, GPIO_PIN_RESET);
+
+	GPIOx.Pin = DRUM_LEFT_PIN | DRUM_RIGHT_PIN | HEATER_PIN;
+	GPIOx.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIOx.Pull = GPIO_PULLDOWN;
+	GPIOx.Speed = GPIO_SPEED_FREQ_LOW;
+
+	HAL_GPIO_Init(OUTPUT_PORT, &GPIOx);
+
+	HAL_GPIO_WritePin(FAN_PORT, FAN_PIN, GPIO_PIN_RESET);
+
+	GPIOx.Pin = FAN_PIN;
+	GPIOx.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIOx.Pull = GPIO_PULLDOWN;
+	GPIOx.Speed = GPIO_SPEED_FREQ_LOW;
+
+	HAL_GPIO_Init(FAN_PORT, &GPIOx);
+}
+
+void output_off(void)
+{
+	HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN | DRUM_RIGHT_PIN | HEATER_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(FAN_PORT, FAN_PIN, GPIO_PIN_RESET);
+}

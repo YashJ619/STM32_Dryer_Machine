@@ -45,9 +45,16 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint8_t door_open_flag = 0;
-uint8_t otp = 1;
+uint8_t door_open_flag = 0U;
+uint8_t otp = 1; //not in use
 uint8_t scaned_key = NO_KEY_PRESSED;
+
+uint8_t rot_left_cunt = 30U;
+uint8_t rot_right_cunt = 0U;
+uint8_t pasue_cunt = 0U;
+
+static uint8_t rot_sw_state = 0U;
+static uint8_t flipflop = 0U;
 
 /* USER CODE END PV */
 
@@ -111,8 +118,12 @@ int main(void) {
 		/* USER CODE END WHILE */
 		/* USER CODE BEGIN 3 */
 
-		if (!door_open_flag) {
-			//do something
+		if (door_open_flag) {
+
+			//printf("Door Open\r\n");
+			HAL_GPIO_WritePin(GPIOC, LED, LOW);
+
+		} else {
 
 			//printf("Door Close\r\n");
 
@@ -161,10 +172,38 @@ int main(void) {
 					}
 					break;
 				case FN_KEY_PRESSED:
-					dryer.heatTime = 0U;
-					dryer.cycle = COOL_CYCLE;
-					printf("HeatTime = %d\r\n",dryer.heatTime);
-					printf("CoolTime = %d\r\n",dryer.coolTime);
+					if (dryer.heatTime > 0) {
+						dryer.heatTime--;
+					} else {
+						dryer.coolTime--;
+					}
+
+					if ((dryer.heatTime == 0) && (dryer.cycle == HEAT_CYCLE)) {
+						dryer.cycle = COOL_CYCLE;
+					}
+					if((dryer.coolTime == 0) && (dryer.cycle == COOL_CYCLE))
+					{
+						dryer.state = STOP;
+					}
+
+					if (pasue_cunt > 0) {
+						pasue_cunt--;
+					} else if (rot_left_cunt > 0) {
+						rot_left_cunt--;
+						if (rot_left_cunt == 0) {
+							pasue_cunt = 3U;
+						}
+					} else if (rot_right_cunt > 0) {
+						rot_right_cunt--;
+						if (rot_right_cunt == 0) {
+							pasue_cunt = 3U;
+						}
+					}
+					otp = 1;
+//					dryer.heatTime = 0U;
+//					dryer.cycle = COOL_CYCLE;
+//					printf("HeatTime = %d\r\n", dryer.heatTime);
+//					printf("CoolTime = %d\r\n", dryer.coolTime);
 					break;
 				}
 				scaned_key = NO_KEY_PRESSED;
@@ -202,15 +241,72 @@ int main(void) {
 					break;
 				}
 				scaned_key = NO_KEY_PRESSED;
-			}
+			} //else if ends
+		} //else ends
+
+		if (door_open_flag) {
 
 		} else {
-			//printf("Door Open\r\n");
-			HAL_GPIO_WritePin(GPIOC, LED, LOW);
+			if (dryer.mode != NO_MODE) {
+				HAL_GPIO_WritePin(FAN_PORT, FAN_PIN, HIGH);
+				if (otp) {
+					printf("HeaterTime = %d\r\n", dryer.heatTime);
+					printf("CoolTime = %d\r\n", dryer.coolTime);
+					printf("ROT_LEFT = %d\r\n", rot_left_cunt);
+					printf("PASUE = %d\r\n", pasue_cunt);
+					printf("ROT_RIGHT = %d\r\n", rot_right_cunt);
+					otp = 0;
+				}
+
+				//start Flip Flop
+				if (pasue_cunt > 0) {
+					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN, LOW);
+					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_RIGHT_PIN, LOW);
+					if (pasue_cunt <= 1) {
+						rot_sw_state = HAL_GPIO_ReadPin(INPUT_PORT,
+						SEL_ROT_SW);
+						//printf("Coming %d\r\n",rot_sw_state);
+						if (rot_sw_state) {
+							rot_left_cunt = 30U;
+							rot_right_cunt = 0U;
+						} else {
+							if (flipflop) {
+								rot_left_cunt = 0U;
+								rot_right_cunt = 30U;
+							} else {
+								rot_left_cunt = 30U;
+								rot_right_cunt = 0U;
+							}
+						}
+					}
+				} else if (rot_left_cunt > 0) {
+					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN, HIGH);
+					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_RIGHT_PIN, LOW);
+					flipflop = 1;
+				} else if (rot_right_cunt > 0) {
+					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN, LOW);
+					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_RIGHT_PIN, HIGH);
+					flipflop = 0;
+				}
+				if (dryer.cycle == HEAT_CYCLE) {
+					HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, HIGH);
+				} else {
+					HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, LOW);
+				}
+			}
 		}
+//			switch(dryer.mode){
+//			case LOW_LEVEL:
+//				break;
+//			case MED_LEVEL:
+//				break;
+//			case HIGH_LEVEL:
+//				break;
+//			}
 	}
-	/* USER CODE END 3 */
-}
+
+} //while ends
+/* USER CODE END 3 */
 
 /**
  * @brief System Clock Configuration
@@ -248,7 +344,7 @@ void SystemClock_Config(void) {
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	otp = 1;
+//otp = 1;
 	if (GPIO_Pin == DOOR_SW) {
 		uint8_t temp = HAL_GPIO_ReadPin(INPUT_PORT, DOOR_SW);
 

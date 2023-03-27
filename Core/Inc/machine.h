@@ -10,6 +10,7 @@
 
 #include "stm32f1xx_hal.h"
 #include "keypad.h"
+#include "output.h"
 
 #define HIGH 			GPIO_PIN_SET
 #define LOW 			GPIO_PIN_RESET
