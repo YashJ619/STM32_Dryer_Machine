@@ -11,6 +11,7 @@
 #include "stm32f1xx_hal.h"
 #include "keypad.h"
 #include "output.h"
+#include "timer.h"
 
 #define HIGH 			GPIO_PIN_SET
 #define LOW 			GPIO_PIN_RESET
@@ -19,6 +20,7 @@ typedef enum
 {
 	INIT,
 	START,
+	COMPLETE,
 	STOP
 }StateTypeDef_t;
 
@@ -42,6 +44,7 @@ typedef struct
 	ModeTypeDef_t mode;
 	uint16_t heatTime;
 	uint16_t coolTime;
+	uint8_t beepTime;
 	uint8_t cycle;
 }MachineInit_t;
 

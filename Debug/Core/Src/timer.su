@@ -1,0 +1,2 @@
+../Core/Src/timer.c:12:6:timer_init	40	static
+../Core/Src/timer.c:41:6:TIM4_IRQHandler	8	static

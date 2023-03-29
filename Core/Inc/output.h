@@ -15,6 +15,8 @@
 #define FAN_PIN					GPIO_PIN_8
 #define HEATER_PIN				GPIO_PIN_15
 
+#define BUZZER_PIN				GIPO_PIN_9
+
 #define OUTPUT_PORT				GPIOB
 #define FAN_PORT				GPIOA
 
