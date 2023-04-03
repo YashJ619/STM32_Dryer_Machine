@@ -12,6 +12,7 @@
 #include "keypad.h"
 #include "output.h"
 #include "timer.h"
+#include "lcd.h"
 
 #define HIGH 			GPIO_PIN_SET
 #define LOW 			GPIO_PIN_RESET

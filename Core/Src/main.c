@@ -107,10 +107,18 @@ int main(void) {
 	keypad_init();
 	timer_init();
 
+	lcd_gpio_init();
+	lcd_init(0);
+	lcd_begin(16, 4, 0);
+
+
 	//HAL_UART_Transmit(&huart1, (uint8_t*)"HELLO\r\n", sizeof("HELLO\r\n"), 10);
 	printf("Hello\r\n");
 	dryer.state = INIT;
 	dryer.mode = NO_MODE;
+
+	lcd_set_cursor(1, 1);
+	lcd_print("Dryer");
 
 	/* USER CODE END 2 */
 

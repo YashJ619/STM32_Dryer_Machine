@@ -8,6 +8,7 @@
 
 void output_init(void) {
 	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_GPIOC_CLK_ENABLE();
 
 	GPIO_InitTypeDef GPIOx = { 0 };
 
@@ -28,6 +29,16 @@ void output_init(void) {
 	GPIOx.Speed = GPIO_SPEED_FREQ_LOW;
 
 	HAL_GPIO_Init(FAN_PORT, &GPIOx);
+
+	HAL_GPIO_WritePin(BUZZER_PORT, BUZZER_PIN, GPIO_PIN_RESET);
+
+	GPIOx.Pin = BUZZER_PIN;
+	GPIOx.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIOx.Pull = GPIO_PULLDOWN;
+	GPIOx.Speed = GPIO_SPEED_FREQ_LOW;
+
+	HAL_GPIO_Init(BUZZER_PORT, &GPIOx);
+
 }
 
 void output_off(void)
