@@ -45,6 +45,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+MachineInit_t dryer;
 uint8_t door_open_flag = 0U;
 uint8_t timer_stop_evt = 0U;
 uint8_t timer_start_evt = 0U;
@@ -57,6 +58,11 @@ uint8_t pasue_cunt = 0U;
 
 static uint8_t rot_sw_state = 0U;
 static uint8_t flipflop = 0U;
+
+LCDPageTypeDef cur_page = INIT_PAGE;
+LCDPageTypeDef last_page = INIT_PAGE;
+
+uint8_t lcd_update_flag = 0U;
 
 /* USER CODE END PV */
 
@@ -111,14 +117,13 @@ int main(void) {
 	lcd_init(0);
 	lcd_begin(16, 4, 0);
 
-
 	//HAL_UART_Transmit(&huart1, (uint8_t*)"HELLO\r\n", sizeof("HELLO\r\n"), 10);
 	printf("Hello\r\n");
 	dryer.state = INIT;
 	dryer.mode = NO_MODE;
+	dryer.setTemp = 40U;
 
-	lcd_set_cursor(1, 1);
-	lcd_print("Dryer");
+	lcd_update();
 
 	/* USER CODE END 2 */
 
@@ -128,21 +133,16 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		if(timer_stop_evt)
-		{
+		if (timer_stop_evt) {
 			HAL_TIM_Base_Stop_IT(&htim4);
 			timer_stop_evt = 0;
 
-		}else if((timer_start_evt) && (dryer.state == START))
-		{
-
+		} else if ((timer_start_evt) && (dryer.state == START)) {
 			HAL_TIM_Base_Start_IT(&htim4);
 			timer_start_evt = 0;
-
 		}
 
 		if (door_open_flag) {
-
 			HAL_GPIO_WritePin(GPIOC, LED, LOW);
 
 		} else {
@@ -154,8 +154,8 @@ int main(void) {
 				scaned_key = scan_keypad();
 
 				switch (scaned_key) {
-
 				case LOW_KEY_PRESSED:
+					lcd_update_flag = 1U;
 					switch (dryer.cycle) {
 
 					case HEAT_CYCLE:
@@ -171,11 +171,13 @@ int main(void) {
 					break;
 
 				case MED_KEY_PRESSED:
+					lcd_update_flag = 1U;
 					dryer.state = INIT;
 					timer_stop_evt = 1U;
 					break;
 
 				case HIGH_KEY_PRESSED:
+					lcd_update_flag = 1U;
 					switch (dryer.cycle) {
 
 					case HEAT_CYCLE:
@@ -200,6 +202,7 @@ int main(void) {
 					break;
 
 				case FN_KEY_PRESSED:
+					lcd_update_flag = 1U;
 					dryer.heatTime = 0U;
 					dryer.cycle = COOL_CYCLE;
 					printf("HeatTime = %d\r\n", dryer.heatTime);
@@ -221,11 +224,15 @@ int main(void) {
 					dryer.heatTime = 600U;
 					dryer.coolTime = 300U;
 					dryer.beepTime = 30U;
+					dryer.setTemp = 40U;
 					dryer.cycle = HEAT_CYCLE;
 					rot_left_cunt = 30U;
 					rot_right_cunt = 0U;
 					pasue_cunt = 0U;
 					timer_start_evt = 1U;
+					cur_page = LOW_LEVEL_PAGE;
+					lcd_update_flag = 1U;
+					//HAL_Delay(HAL_MAX_DELAY);
 					HAL_UART_Transmit(&huart1, (uint8_t*) "LOW_LEVEL\r\n",
 							sizeof("LOW_LEVEL\r\n"), 10);
 					break;
@@ -236,11 +243,14 @@ int main(void) {
 					dryer.heatTime = 1200U;
 					dryer.coolTime = 300U;
 					dryer.beepTime = 30U;
+					dryer.setTemp = 70U;
 					dryer.cycle = HEAT_CYCLE;
 					rot_left_cunt = 30U;
 					rot_right_cunt = 0U;
 					pasue_cunt = 0U;
 					timer_start_evt = 1U;
+					cur_page = MED_LEVEL_PAGE;
+					lcd_update_flag = 1U;
 					HAL_UART_Transmit(&huart1, (uint8_t*) "MED_LEVEL\r\n",
 							sizeof("MED_LEVEL\r\n"), 10);
 					break;
@@ -251,11 +261,14 @@ int main(void) {
 					dryer.heatTime = 1800U;
 					dryer.coolTime = 300U;
 					dryer.beepTime = 30U;
+					dryer.setTemp = 90U;
 					dryer.cycle = HEAT_CYCLE;
 					rot_left_cunt = 30U;
 					rot_right_cunt = 0U;
 					pasue_cunt = 0U;
 					timer_start_evt = 1U;
+					cur_page = HIGH_LEVEL_PAGE;
+					lcd_update_flag = 1U;
 					HAL_UART_Transmit(&huart1, (uint8_t*) "HIGH_LEVEL\r\n",
 							sizeof("HIGH_LEVEL\r\n"), 10);
 					break;
@@ -275,8 +288,7 @@ int main(void) {
 			HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_RIGHT_PIN, LOW);
 			HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, LOW);
 
-			if(dryer.state == COMPLETE)
-			{
+			if (dryer.state == COMPLETE) {
 				//beep off
 				timer_stop_evt = 1U;
 				dryer.beepTime = 0U;
@@ -353,31 +365,35 @@ int main(void) {
 					HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, LOW);
 
 				}
-			}else if(dryer.state == COMPLETE){
+			} else if (dryer.state == COMPLETE) {
 
-				if(dryer.beepTime == 0)
-				{
+				if (dryer.beepTime == 0) {
+					HAL_GPIO_WritePin(GPIOC, LED, LOW);
+					cur_page = INIT_PAGE;
+					lcd_update_flag = 1U;
 					//beep off
 					timer_stop_evt = 1U;
 					dryer.state = INIT;
 					dryer.mode = NO_MODE;
-				}
-				if(dryer.beepTime % 3 == 0)
-				{
+				}else if (dryer.beepTime % 3 == 0) {
 					//beep toggle
 				}
 				HAL_GPIO_WritePin(FAN_PORT, FAN_PIN, LOW);
 				HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN, LOW);
 				HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_RIGHT_PIN, LOW);
 				HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, LOW);
-			}
-			else{
+
+			} else {
 				//beep off
 				HAL_GPIO_WritePin(FAN_PORT, FAN_PIN, LOW);
 				HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN, LOW);
 				HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_RIGHT_PIN, LOW);
 				HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, LOW);
 			}
+		}
+		if (lcd_update_flag) {
+			lcd_update();
+			lcd_update_flag = 0U;
 		}
 	}
 }
@@ -418,23 +434,29 @@ void SystemClock_Config(void) {
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	static LCDPageTypeDef temp_page;
 //otp = 1;
 	if (GPIO_Pin == DOOR_SW) {
 
-		uint8_t temp = HAL_GPIO_ReadPin(INPUT_PORT, DOOR_SW);
+		uint8_t temp_pin_state = HAL_GPIO_ReadPin(INPUT_PORT, DOOR_SW);
 
-		if (temp == HIGH) {
+		if (temp_pin_state == HIGH) {
 
 			door_open_flag = 1;
 			timer_stop_evt = 1;
+			temp_page = cur_page;
+			cur_page = DOOR_OPEN_PAGE;
+
 			//stop
 
 		} else {
 
+			cur_page = temp_page;
 			timer_start_evt = 1;
 			door_open_flag = 0;
 
 		}
+		lcd_update_flag = 1U;
 	}
 }
 
@@ -446,12 +468,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 		dryer.heatTime--;
 
-	} else if(dryer.coolTime > 0) {
+	} else if (dryer.coolTime > 0) {
 
 		dryer.coolTime--;
 
-	}else if(dryer.state == COMPLETE)
-	{
+	} else if (dryer.state == COMPLETE) {
 		dryer.beepTime--;
 	}
 
@@ -459,12 +480,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 		dryer.cycle = COOL_CYCLE;
 
-	}else if ((dryer.coolTime == 0) && (dryer.cycle == COOL_CYCLE)) {
+	} else if ((dryer.coolTime == 0) && (dryer.cycle == COOL_CYCLE)) {
 
 		printf("Complete\r\n");
 		dryer.state = COMPLETE;
 		dryer.mode = NO_MODE;
-
+		cur_page = COMPLETE_PAGE;
 	}
 
 	if (pasue_cunt > 0) {
@@ -492,6 +513,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		}
 	}
 	otp = 1;
+	lcd_update_flag = 1U;
 }
 
 /* USER CODE END 4 */

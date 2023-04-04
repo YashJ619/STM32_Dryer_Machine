@@ -16,4 +16,4 @@
 ../Core/Src/lcd.c:251:6:lcd_rightToLeft	8	static
 ../Core/Src/lcd.c:257:6:lcd_autoscroll	16	static
 ../Core/Src/lcd.c:271:6:lcd_print	16	static
-../Core/Src/lcd.c:289:6:lcd_set_cursor	16	static
+../Core/Src/lcd.c:280:6:lcd_set_cursor	40	static

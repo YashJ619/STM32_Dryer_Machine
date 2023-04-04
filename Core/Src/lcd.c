@@ -145,7 +145,7 @@ void lcd_begin(uint8_t cols, uint8_t lines, uint8_t dotsize)
 
 void lcd_home(void){
 	lcd_send_cmd(CMD_RETURNHOME); // set cursor position to zero
-	HAL_Delay(2000); // this command takes a long time!
+	HAL_Delay(2); // this command takes a long time!
 }
 
 void lcd_display(uint8_t state)
@@ -195,7 +195,7 @@ void lcd_send_cmd(uint8_t cmd)
 void lcd_clear(void)
 {
 	lcd_send_cmd(CMD_CLEARDISPLAY);
-	HAL_Delay(2000);
+	HAL_Delay(2);
 }
 
 void lcd_send_data(uint8_t data)
@@ -277,33 +277,33 @@ void lcd_print(char *str)
 	}while(*str != '\0');
 }
 
-//void lcd_set_cursor(uint8_t col, uint8_t row)
-//{
-//	int row_offsets[] = {0x00, 0x40, 0x14, 0x54};
-//	if (row > _numlines) {
-//		row = _numlines - 1; // we count rows starting w/0
-//		}
-//	lcd_send_cmd(CMD_SETDDRAM_ADDR | (col + row_offsets[row]));
-//}
-
-void lcd_set_cursor(uint8_t row, uint8_t col)
+void lcd_set_cursor(uint8_t col, uint8_t row)
 {
-	col--;
-	switch(row)
-	{
-	case 1:
-		lcd_send_cmd(col |= 0x80);
-		break;
-	case 2:
-		lcd_send_cmd(col |= 0xC0);
-		break;
-	case 3:
-		lcd_send_cmd(col |= 0x90);
-		break;
-	case 4:
-		lcd_send_cmd(col |= 0xD0);
-		break;
-	default:
-		break;
-	}
+	int row_offsets[] = {0x00, 0x40, 0x14, 0x54};
+	if (row > _numlines) {
+		row = _numlines - 1; // we count rows starting w/0
+		}
+	lcd_send_cmd(CMD_SETDDRAM_ADDR | (col + row_offsets[row]));
 }
+
+//void lcd_set_cursor(uint8_t row, uint8_t col)
+//{
+//	col--;
+//	switch(row)
+//	{
+//	case 1:
+//		lcd_send_cmd(col |= 0x80);
+//		break;
+//	case 2:
+//		lcd_send_cmd(col |= 0xC0);
+//		break;
+//	case 3:
+//		lcd_send_cmd(col |= 0x90);
+//		break;
+//	case 4:
+//		lcd_send_cmd(col |= 0xD0);
+//		break;
+//	default:
+//		break;
+//	}
+//}

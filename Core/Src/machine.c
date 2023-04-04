@@ -6,6 +6,3 @@
  */
 
 #include"machine.h"
-
-
-MachineInit_t dryer;

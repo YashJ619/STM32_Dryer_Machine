@@ -13,6 +13,7 @@
 #include "output.h"
 #include "timer.h"
 #include "lcd.h"
+#include "lcd_app.h"
 
 #define HIGH 			GPIO_PIN_SET
 #define LOW 			GPIO_PIN_RESET
@@ -45,10 +46,9 @@ typedef struct
 	ModeTypeDef_t mode;
 	uint16_t heatTime;
 	uint16_t coolTime;
+	uint8_t setTemp;
 	uint8_t beepTime;
 	uint8_t cycle;
 }MachineInit_t;
-
-extern MachineInit_t dryer;
 
 #endif /* INC_MACHINE_H_ */
