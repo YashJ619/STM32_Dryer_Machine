@@ -50,7 +50,15 @@ void lcd_update(void)
 
 void welcome_page(void)
 {
-	lcd_clear();
+	if(last_page!=cur_page)
+	{
+		lcd_clear();
+		last_page = cur_page;
+	}
+	else{
+		lcd_home();
+	}
+	
 	lcd_set_cursor(6, 0);
 	lcd_print("WELCOME!");
 	lcd_set_cursor(3,2);
@@ -61,7 +69,15 @@ void welcome_page(void)
 
 void door_open_page(void)
 {
-	lcd_clear();
+	if(last_page!=cur_page)
+	{
+		lcd_clear();
+		last_page = cur_page;
+	}
+	else{
+		lcd_home();
+	}
+
 	lcd_set_cursor(6, 0);
 	lcd_print("DOOR");
 	lcd_set_cursor(2,2);
@@ -70,7 +86,15 @@ void door_open_page(void)
 
 void heater_coil_page(void)
 {
-	lcd_clear();
+	if(last_page!=cur_page)
+	{
+		lcd_clear();
+		last_page = cur_page;
+	}
+	else{
+		lcd_home();
+	}
+
 	lcd_set_cursor(5, 0);
 	lcd_print("ERROR");
 	lcd_set_cursor(1,2);
@@ -79,7 +103,15 @@ void heater_coil_page(void)
 
 void limit_sw_err_page(void)
 {
-	lcd_clear();
+	if(last_page!=cur_page)
+	{
+		lcd_clear();
+		last_page = cur_page;
+	}
+	else{
+		lcd_home();
+	}
+
 	lcd_set_cursor(5, 0);
 	lcd_print("ERROR");
 	lcd_set_cursor(2, 2);
@@ -88,12 +120,21 @@ void limit_sw_err_page(void)
 
 void complete_page(void)
 {
-	lcd_clear();
+	if(last_page!=cur_page)
+	{
+		lcd_clear();
+		last_page = cur_page;
+	}
+	else{
+		lcd_home();
+	}
+
 	lcd_set_cursor(4, 0);
 	lcd_print("PROCESS");
 	lcd_set_cursor(0, 2);
 	lcd_print("COMPLETE");
 }
+
 void mode_level_page(void)
 {
 	static uint16_t a = 0,b = 0;

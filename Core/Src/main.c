@@ -123,6 +123,12 @@ int main(void) {
 	dryer.mode = NO_MODE;
 	dryer.setTemp = 40U;
 
+	if (HAL_GPIO_ReadPin(INPUT_PORT, DOOR_SW) == HIGH) {
+		door_open_flag = 1U;
+		cur_page = DOOR_OPEN_PAGE;
+		lcd_update_flag = 1U;
+	}
+
 	lcd_update();
 
 	/* USER CODE END 2 */
@@ -131,9 +137,22 @@ int main(void) {
 	/* USER CODE BEGIN WHILE */
 	while (1) {
 		/* USER CODE END WHILE */
-
 		/* USER CODE BEGIN 3 */
+
+		/**********************************************************************************************************
+		 **************************************** LCD SCREEN UPDATE RUTINE ****************************************
+		 **********************************************************************************************************/
+		if (lcd_update_flag) {
+			//printf("Page: %d\r\n",cur_page);
+			lcd_update();
+			lcd_update_flag = 0U;
+		}
+
+		/***************************************************************************************************************
+		 ******************************************* TIMER EVENT RUTINE ************************************************
+		 ***************************************************************************************************************/
 		if (timer_stop_evt) {
+			//printf("Stoped\r\n");
 			HAL_TIM_Base_Stop_IT(&htim4);
 			timer_stop_evt = 0;
 
@@ -142,6 +161,10 @@ int main(void) {
 			timer_start_evt = 0;
 		}
 
+		/***************************************************************************************************************
+		 ********************************************* KEYBOARD SCANNING ***********************************************
+		 ********************************** INCREMENT DECREMENT OF TIMER AND MODE SET **********************************
+		 ***************************************************************************************************************/
 		if (door_open_flag) {
 			HAL_GPIO_WritePin(GPIOC, LED, LOW);
 
@@ -173,6 +196,9 @@ int main(void) {
 				case MED_KEY_PRESSED:
 					lcd_update_flag = 1U;
 					dryer.state = INIT;
+					dryer.mode = NO_MODE;
+					cur_page = INIT_PAGE;
+					lcd_update_flag = 1U;
 					timer_stop_evt = 1U;
 					break;
 
@@ -278,9 +304,19 @@ int main(void) {
 				}
 
 				scaned_key = NO_KEY_PRESSED;
-			} //else if ends
-		} //else ends
+			}
+		}
 
+		/**********************************************************************************************************
+		 *********************** CONTROL MACHINE IN START/STOP/COMPLETE PROCESS STATE *****************************
+		 * @START STATE
+		 * 		->CONTROLS FAN, DRUM MOTORS, HEATER SWTICH
+		 * 		->READ TEMPRETURE AND MAINTAIN HEATER
+		 * @COMPLETE STATE
+		 * 		->TURNS OFF FAN, DRUM MOTORS, HEATER
+		 * 		->TRUNS ON/OFF BEEP EVERY 3s FOR 30s
+		 * 		->WATCHS DOOR OPEN
+		 **********************************************************************************************************/
 		if (door_open_flag) {
 
 			HAL_GPIO_WritePin(FAN_PORT, FAN_PIN, LOW);
@@ -375,7 +411,7 @@ int main(void) {
 					timer_stop_evt = 1U;
 					dryer.state = INIT;
 					dryer.mode = NO_MODE;
-				}else if (dryer.beepTime % 3 == 0) {
+				} else if (dryer.beepTime % 3 == 0) {
 					//beep toggle
 				}
 				HAL_GPIO_WritePin(FAN_PORT, FAN_PIN, LOW);
@@ -391,10 +427,7 @@ int main(void) {
 				HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, LOW);
 			}
 		}
-		if (lcd_update_flag) {
-			lcd_update();
-			lcd_update_flag = 0U;
-		}
+		lcd_update_flag = 1U;
 	}
 }
 /* USER CODE END 3 */
@@ -434,29 +467,50 @@ void SystemClock_Config(void) {
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	static LCDPageTypeDef temp_page;
+	static volatile uint8_t temp_pin_state = 0U;
 //otp = 1;
 	if (GPIO_Pin == DOOR_SW) {
+		NVIC_DisableIRQ(EXTI0_IRQn);
 
-		uint8_t temp_pin_state = HAL_GPIO_ReadPin(INPUT_PORT, DOOR_SW);
+		temp_pin_state = HAL_GPIO_ReadPin(INPUT_PORT, DOOR_SW);
+		//printf("Pin: %d\r\n",temp_pin_state);
 
 		if (temp_pin_state == HIGH) {
 
 			door_open_flag = 1;
 			timer_stop_evt = 1;
-			temp_page = cur_page;
 			cur_page = DOOR_OPEN_PAGE;
+			lcd_update_flag = 1U;
+			dryer.state = STOP;
 
 			//stop
 
 		} else {
-
-			cur_page = temp_page;
+			switch (dryer.mode) {
+			case NO_MODE:
+				cur_page = INIT_PAGE;
+				dryer.state = INIT;
+				break;
+			case LOW_LEVEL:
+				cur_page = LOW_LEVEL_PAGE;
+				dryer.state = START;
+				break;
+			case MED_LEVEL:
+				cur_page = MED_LEVEL_PAGE;
+				dryer.state = START;
+				break;
+			case HIGH_LEVEL:
+				cur_page = HIGH_LEVEL_PAGE;
+				dryer.state = START;
+				break;
+			}
 			timer_start_evt = 1;
 			door_open_flag = 0;
-
+			lcd_update_flag = 1U;
 		}
-		lcd_update_flag = 1U;
+		//printf("Door page: %d\r\n",cur_page);
+		//printf("LCD: %d\r\n",lcd_update_flag);
+		NVIC_EnableIRQ(EXTI0_IRQn);
 	}
 }
 
