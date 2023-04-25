@@ -22,6 +22,7 @@
 #define FAN_PORT				GPIOA
 
 
-
+void output_init(void);
+void output_off(void);
 
 #endif /* INC_OUTPUT_H_ */

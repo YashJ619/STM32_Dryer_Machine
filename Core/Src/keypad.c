@@ -55,7 +55,7 @@ uint8_t is_low_key_pressed()
 	static volatile uint8_t last_state = 0U;
 	static volatile uint32_t last_time = 0U;
 
-	if(HAL_GetTick() - last_time > 10U)
+	if(HAL_GetTick() - last_time > 5U)
 	{
 		if(HAL_GPIO_ReadPin(KEYPAD_PORT, LOW_KEY) == GPIO_PIN_RESET)
 		{
@@ -86,7 +86,7 @@ uint8_t is_med_key_pressed()
 	static volatile uint8_t last_state = 0U;
 	static volatile uint32_t last_time = 0U;
 
-	if(HAL_GetTick() - last_time > 10U)
+	if(HAL_GetTick() - last_time > 5U)
 	{
 		if(HAL_GPIO_ReadPin(KEYPAD_PORT, MED_KEY) == GPIO_PIN_RESET)
 		{
@@ -117,7 +117,7 @@ uint8_t is_high_key_pressed()
 	static volatile uint8_t last_state = 0U;
 	static volatile uint32_t last_time = 0U;
 
-	if(HAL_GetTick() - last_time > 10U)
+	if(HAL_GetTick() - last_time > 5U)
 	{
 		if(HAL_GPIO_ReadPin(KEYPAD_PORT, HIGH_KEY) == GPIO_PIN_RESET)
 		{
@@ -148,7 +148,7 @@ uint8_t is_fn_key_pressed()
 	static volatile uint8_t last_state = 0U;
 	static volatile uint32_t last_time = 0U;
 
-	if(HAL_GetTick() - last_time > 10U)
+	if(HAL_GetTick() - last_time > 5U)
 	{
 		if(HAL_GPIO_ReadPin(KEYPAD_PORT, FN_KEY) == GPIO_PIN_RESET)
 		{

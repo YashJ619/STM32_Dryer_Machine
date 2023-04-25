@@ -1,0 +1,2 @@
+../Core/Src/inputs.c:16:6:input_init	40	static
+../Core/Src/inputs.c:51:6:EXTI0_IRQHandler	8	static

@@ -1,4 +1,4 @@
-"./Core/Src/gpio.o"
+"./Core/Src/inputs.o"
 "./Core/Src/keypad.o"
 "./Core/Src/lcd.o"
 "./Core/Src/lcd_app.o"
