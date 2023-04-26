@@ -53,20 +53,13 @@ uint8_t is_door_open(void) {
 
 	if (HAL_GetTick() - last_time > 5U) {
 		if (HAL_GPIO_ReadPin(INPUT_PORT, DOOR_SW) == GPIO_PIN_RESET) {
-			if (last_state == 1) {
-				if (HAL_GPIO_ReadPin(INPUT_PORT, DOOR_SW) == GPIO_PIN_RESET) {
-					last_state = 0;
-					return 1;
-				} else {
-					last_state = 1;
-				}
-			}
+			last_state = 0;
 		} else {
 			last_state = 1;
 		}
 		last_time = HAL_GetTick();
 	}
-	return 0;
+	return last_state;
 }
 
 uint8_t is_coil_open(void) {
