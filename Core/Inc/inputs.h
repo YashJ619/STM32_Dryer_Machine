@@ -19,6 +19,7 @@
 
 void input_init(void);
 uint8_t is_door_open(void);
+uint8_t is_coil_open(void);
 
 #endif /*__ GPIO_H__ */
 

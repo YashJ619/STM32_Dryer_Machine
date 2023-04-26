@@ -95,10 +95,10 @@ void heater_coil_page(void)
 		lcd_home();
 	}
 
-	lcd_set_cursor(5, 0);
-	lcd_print("ERROR");
-	lcd_set_cursor(1,2);
+	lcd_set_cursor(5, 1);
 	lcd_print("HEATER");
+	lcd_set_cursor(5,2);
+	lcd_print("ERROR");
 }
 
 void limit_sw_err_page(void)

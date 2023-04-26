@@ -1,3 +1,4 @@
 ../Core/Src/inputs.c:16:6:input_init	40	static
-../Core/Src/inputs.c:51:9:is_door_open	8	static
-../Core/Src/inputs.c:82:6:EXTI0_IRQHandler	8	static
+../Core/Src/inputs.c:50:9:is_door_open	8	static
+../Core/Src/inputs.c:72:9:is_coil_open	8	static
+../Core/Src/inputs.c:87:6:EXTI0_IRQHandler	8	static
