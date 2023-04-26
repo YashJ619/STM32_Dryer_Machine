@@ -78,9 +78,9 @@ void door_open_page(void)
 		lcd_home();
 	}
 
-	lcd_set_cursor(6, 0);
+	lcd_set_cursor(6, 1);
 	lcd_print("DOOR");
-	lcd_set_cursor(2,2);
+	lcd_set_cursor(6,2);
 	lcd_print("OPEN");
 }
 

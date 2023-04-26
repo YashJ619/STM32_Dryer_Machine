@@ -1,8 +1,8 @@
 ../Drivers/CMSIS/Include/core_cm3.h:1511:22:__NVIC_EnableIRQ	16	static
 ../Drivers/CMSIS/Include/core_cm3.h:1547:22:__NVIC_DisableIRQ	16	static,ignoring_inline_asm
-../Core/Src/main.c:74:5:__io_putchar	16	static
-../Core/Src/main.c:84:5:main	8	static
-../Core/Src/main.c:436:6:SystemClock_Config	72	static
-../Core/Src/main.c:466:6:HAL_GPIO_EXTI_Callback	16	static
-../Core/Src/main.c:514:6:HAL_TIM_PeriodElapsedCallback	16	static
-../Core/Src/main.c:576:6:Error_Handler	4	static,ignoring_inline_asm
+../Core/Src/main.c:75:5:__io_putchar	16	static
+../Core/Src/main.c:85:5:main	8	static
+../Core/Src/main.c:498:6:SystemClock_Config	72	static
+../Core/Src/main.c:528:6:HAL_GPIO_EXTI_Callback	16	static
+../Core/Src/main.c:578:6:HAL_TIM_PeriodElapsedCallback	16	static
+../Core/Src/main.c:640:6:Error_Handler	4	static,ignoring_inline_asm

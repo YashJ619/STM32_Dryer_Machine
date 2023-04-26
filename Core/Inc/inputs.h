@@ -18,6 +18,7 @@
 #define INPUT_PORT			GPIOA
 
 void input_init(void);
+uint8_t is_door_open(void);
 
 #endif /*__ GPIO_H__ */
 

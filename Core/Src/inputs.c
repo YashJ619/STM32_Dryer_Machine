@@ -48,7 +48,7 @@ void input_init(void)
 	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 }
 
-uint8_t door_open(void)
+uint8_t is_door_open(void)
 {
 	static volatile uint8_t last_state = 0U;
 	static volatile uint32_t last_time = 0U;
