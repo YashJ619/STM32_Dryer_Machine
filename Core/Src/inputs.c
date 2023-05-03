@@ -77,6 +77,21 @@ uint8_t is_coil_open(void) {
 	return last_state;
 }
 
+uint8_t limit_sw_open(void) {
+	static volatile uint8_t last_state = 0U;
+	static volatile uint32_t last_time = 0U;
+
+	if (HAL_GetTick() - last_time > 5U) {
+		if (HAL_GPIO_ReadPin(INPUT_PORT, LIMIT_SW) == GPIO_PIN_RESET) {
+			last_state = 0;
+		} else {
+			last_state = 1;
+		}
+		last_time = HAL_GetTick();
+	}
+	return last_state;
+}
+
 void EXTI0_IRQHandler(void) {
 	HAL_GPIO_EXTI_IRQHandler(DOOR_SW);
 }

@@ -52,6 +52,10 @@ uint8_t timer_start_evt = 0U;
 uint8_t otp = 1; //not in use
 uint8_t scaned_key = NO_KEY_PRESSED;
 
+uint8_t limit_timeout = 30U;
+uint8_t limit_timeout_flag = 0U;
+uint8_t limit_timeout_evt = 0U;
+
 uint8_t rot_left_cunt = 30U;
 uint8_t rot_right_cunt = 0U;
 uint8_t pasue_cunt = 0U;
@@ -175,32 +179,40 @@ int main(void) {
 				//stop
 
 			} else {
-				switch (dryer.mode) {
-				case NO_MODE:
-					cur_page = INIT_PAGE;
-					dryer.state = INIT;
-					break;
-				case LOW_LEVEL:
-					cur_page = LOW_LEVEL_PAGE;
-					dryer.state = START;
-					break;
-				case MED_LEVEL:
-					cur_page = MED_LEVEL_PAGE;
-					dryer.state = START;
-					break;
-				case HIGH_LEVEL:
-					cur_page = HIGH_LEVEL_PAGE;
-					dryer.state = START;
-					break;
-				}
-				timer_start_evt = 1U;
+				if (!limit_timeout_flag) {
+					switch (dryer.mode) {
+					case NO_MODE:
+						cur_page = INIT_PAGE;
+						dryer.state = INIT;
+						break;
+					case LOW_LEVEL:
+						cur_page = LOW_LEVEL_PAGE;
+						dryer.state = START;
+						timer_start_evt = 1U;
+						break;
+					case MED_LEVEL:
+						cur_page = MED_LEVEL_PAGE;
+						dryer.state = START;
+						timer_start_evt = 1U;
+						break;
+					case HIGH_LEVEL:
+						cur_page = HIGH_LEVEL_PAGE;
+						dryer.state = START;
+						timer_start_evt = 1U;
+						break;
+					}
+				} else
+					cur_page = LIMIT_SW_ERR_PAGE;
 				lcd_update_flag = 1U;
 				door_open_flag = 0U;
 			}
 			door_open_evt = 0U;
 		}
 
-		if (!door_open_flag && dryer.state != COMPLETE) {
+		/*************************************************************************************************************
+		 *************************************************HERTER COIL CHECK*******************************************
+		 *************************************************************************************************************/
+		if (!door_open_flag && !limit_timeout_flag && dryer.state != COMPLETE) {
 
 			if (is_coil_open()) {
 
@@ -270,10 +282,7 @@ int main(void) {
 		 ********************************************* KEYBOARD SCANNING ***********************************************
 		 ********************************** INCREMENT DECREMENT OF TIMER AND MODE SET **********************************
 		 ***************************************************************************************************************/
-		if (!door_open_flag && !coil_open_flag) {
-//			HAL_GPIO_WritePin(GPIOC, LED, LOW);
-//
-//		} else {
+		if (!door_open_flag && !coil_open_flag && !limit_timeout_flag) {
 
 			HAL_GPIO_WritePin(GPIOC, LED, HIGH);
 
@@ -412,6 +421,36 @@ int main(void) {
 			}
 		}
 
+		if (!door_open_flag && !coil_open_flag && !limit_timeout_flag) {
+			if (dryer.state == START) {
+				if (limit_timeout == 0U) {
+					limit_timeout = 30U;
+					timer_stop_evt = 1U;
+
+					dryer.state = INIT;
+					dryer.mode = NO_MODE;
+
+					cur_page = LIMIT_SW_ERR_PAGE;
+
+					HAL_GPIO_WritePin(FAN_PORT, FAN_PIN, LOW);
+					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN, LOW);
+					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_RIGHT_PIN, LOW);
+					HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, LOW);
+
+					limit_timeout_flag = 1U;
+					lcd_update_flag = 1U;
+				}
+			}
+		} else if (!door_open_flag && !coil_open_flag && limit_timeout_flag) {
+			scaned_key = scan_keypad();
+			if (scaned_key == MED_KEY_PRESSED) {
+				cur_page = INIT_PAGE;
+				limit_timeout = 30U;
+				lcd_update_flag = 1U;
+				limit_timeout_flag = 0U;
+			}
+		}
+
 		/**********************************************************************************************************
 		 *********************** CONTROL MACHINE IN START/STOP/COMPLETE PROCESS STATE *****************************
 		 * @START STATE
@@ -422,7 +461,7 @@ int main(void) {
 		 * 		->TRUNS ON/OFF BEEP EVERY 3s FOR 30s
 		 * 		->WATCHS DOOR OPEN
 		 **********************************************************************************************************/
-		if (!door_open_flag && !coil_open_flag) {
+		if (!door_open_flag && !coil_open_flag && !limit_timeout_flag) {
 
 			if (dryer.state == START) {
 
@@ -574,23 +613,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	HAL_UART_Transmit(&huart1, (uint8_t*) "TIMER\r\n", sizeof("TIMER\r\n"), 10);
 
 	if (dryer.heatTime > 0) {
-
 		dryer.heatTime--;
-
 	} else if (dryer.coolTime > 0) {
-
 		dryer.coolTime--;
-
 	} else if (dryer.state == COMPLETE) {
 		dryer.beepTime--;
 	}
 
 	if ((dryer.heatTime == 0) && (dryer.cycle == HEAT_CYCLE)) {
-
 		dryer.cycle = COOL_CYCLE;
-
 	} else if ((dryer.coolTime == 0) && (dryer.cycle == COOL_CYCLE)) {
-
 		printf("Complete\r\n");
 		dryer.state = COMPLETE;
 		dryer.mode = NO_MODE;
@@ -598,28 +630,27 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	}
 
 	if (pasue_cunt > 0) {
-
 		pasue_cunt--;
-
 	} else if (rot_left_cunt > 0) {
-
 		rot_left_cunt--;
 
 		if (rot_left_cunt == 0) {
-
 			pasue_cunt = 3U;
-
 		}
-
 	} else if (rot_right_cunt > 0) {
-
 		rot_right_cunt--;
 
 		if (rot_right_cunt == 0) {
-
 			pasue_cunt = 3U;
-
 		}
+	}
+
+	if (limit_sw_open()) {
+		if (limit_timeout > 0)
+			limit_timeout--;
+	} else {
+		limit_timeout = 30U;
+		limit_timeout_flag = 0U;
 	}
 	otp = 1;
 	lcd_update_flag = 1U;

@@ -113,9 +113,9 @@ void limit_sw_err_page(void)
 	}
 
 	lcd_set_cursor(5, 0);
-	lcd_print("ERROR");
+	lcd_print("Limit");
 	lcd_set_cursor(2, 2);
-	lcd_print("AIR");
+	lcd_print("Err");
 }
 
 void complete_page(void)
