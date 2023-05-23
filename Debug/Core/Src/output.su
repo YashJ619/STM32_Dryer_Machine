@@ -1,2 +1,2 @@
 ../Core/Src/output.c:9:6:output_init	32	static
-../Core/Src/output.c:44:6:output_off	8	static
+../Core/Src/output.c:52:6:output_off	8	static

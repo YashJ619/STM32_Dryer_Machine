@@ -1,7 +1,7 @@
-../Core/Src/lcd_app.c:24:6:lcd_update	8	static
-../Core/Src/lcd_app.c:51:6:welcome_page	8	static
-../Core/Src/lcd_app.c:70:6:door_open_page	8	static
-../Core/Src/lcd_app.c:87:6:heater_coil_page	8	static
-../Core/Src/lcd_app.c:104:6:limit_sw_err_page	8	static
-../Core/Src/lcd_app.c:121:6:complete_page	8	static
-../Core/Src/lcd_app.c:138:6:mode_level_page	8	static
+../Core/Src/lcd_app.c:25:6:lcd_update	8	static
+../Core/Src/lcd_app.c:52:6:welcome_page	8	static
+../Core/Src/lcd_app.c:71:6:door_open_page	8	static
+../Core/Src/lcd_app.c:88:6:heater_coil_page	8	static
+../Core/Src/lcd_app.c:105:6:limit_sw_err_page	8	static
+../Core/Src/lcd_app.c:122:6:complete_page	8	static
+../Core/Src/lcd_app.c:139:6:mode_level_page	16	static

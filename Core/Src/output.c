@@ -39,6 +39,14 @@ void output_init(void) {
 
 	HAL_GPIO_Init(BUZZER_PORT, &GPIOx);
 
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4 , GPIO_PIN_SET);
+
+	GPIOx.Pin = GPIO_PIN_4;
+	GPIOx.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIOx.Pull = GPIO_PULLUP;
+	GPIOx.Speed = GPIO_SPEED_FREQ_HIGH;
+
+	HAL_GPIO_Init(GPIOA, &GPIOx);
 }
 
 void output_off(void)

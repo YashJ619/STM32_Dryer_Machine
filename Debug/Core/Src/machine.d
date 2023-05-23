@@ -21,12 +21,14 @@ Core/Src/machine.o: ../Core/Src/machine.c ../Core/Inc/machine.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h \
+ ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
  ../Core/Inc/keypad.h ../Core/Inc/usart.h ../Core/Inc/main.h \
- ../Core/Inc/output.h ../Core/Inc/timer.h ../Core/Inc/lcd.h \
- ../Core/Inc/lcd_app.h ../Core/Inc/machine.h
+ ../Core/Inc/inputs.h ../Core/Inc/output.h ../Core/Inc/timer.h \
+ ../Core/Inc/lcd.h ../Core/Inc/lcd_app.h ../Core/Inc/machine.h \
+ ../Core/Inc/MAX6675.h
 ../Core/Inc/machine.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -50,14 +52,17 @@ Core/Src/machine.o: ../Core/Src/machine.c ../Core/Inc/machine.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h:
+../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
 ../Core/Inc/keypad.h:
 ../Core/Inc/usart.h:
 ../Core/Inc/main.h:
+../Core/Inc/inputs.h:
 ../Core/Inc/output.h:
 ../Core/Inc/timer.h:
 ../Core/Inc/lcd.h:
 ../Core/Inc/lcd_app.h:
 ../Core/Inc/machine.h:
+../Core/Inc/MAX6675.h:

@@ -8,12 +8,15 @@
 #ifndef INC_MACHINE_H_
 #define INC_MACHINE_H_
 
+#include "stdio.h"
 #include "stm32f1xx_hal.h"
 #include "keypad.h"
+#include "inputs.h"
 #include "output.h"
 #include "timer.h"
 #include "lcd.h"
 #include "lcd_app.h"
+#include "MAX6675.h"
 
 #define HIGH 			GPIO_PIN_SET
 #define LOW 			GPIO_PIN_RESET

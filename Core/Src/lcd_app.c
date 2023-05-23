@@ -9,6 +9,7 @@
 #include "lcd_app.h"
 #include "stdio.h"
 #include "string.h"
+#include "MAX6675.h"
 
 extern MachineInit_t dryer;
 
@@ -144,6 +145,7 @@ void mode_level_page(void)
 		last_page = cur_page;
 	}
 	else lcd_home();
+
 	a = dryer.heatTime % 60;
 	b = dryer.heatTime / 60;
 	sprintf(lcd_buf,"h=%02d:%02d",b,a);
@@ -153,7 +155,7 @@ void mode_level_page(void)
 	a = dryer.coolTime % 60;
 	b = dryer.coolTime / 60;
 	sprintf(lcd_buf,"c=%02d:%02d",b,a);
-	lcd_set_cursor(13, 0);
+	lcd_set_cursor(9, 0);
 	lcd_print(lcd_buf);
 
 	if(dryer.mode == LOW_LEVEL)sprintf(lcd_buf,"LEVEL: LOW");
@@ -161,14 +163,24 @@ void mode_level_page(void)
 	else if(dryer.mode == HIGH_LEVEL)sprintf(lcd_buf,"LEVEL: HIGH");
 	else;
 
-	lcd_set_cursor(5, 1);
+	lcd_set_cursor(2, 1);
 	lcd_print(lcd_buf);
 
-	sprintf(lcd_buf,"Set:%02dC",dryer.setTemp);
+	sprintf(lcd_buf,"Set Temp : %02dC",dryer.setTemp);
+	lcd_set_cursor(0, 2);
+	lcd_print(lcd_buf);
+
+	int temp = (int)Max6675_Read_Temp();
+
+	if(temp == -1)
+	{
+		sprintf(lcd_buf,"Cur Temp : ERR");
+	}
+	else
+	{
+		sprintf(lcd_buf,"Cur Temp : %dC ",temp);
+	}
 	lcd_set_cursor(0, 3);
 	lcd_print(lcd_buf);
 
-	sprintf(lcd_buf,"Cur:ERR");
-	lcd_set_cursor(13, 3);
-	lcd_print(lcd_buf);
 }
