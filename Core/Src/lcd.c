@@ -277,7 +277,7 @@ void lcd_print(char *str)
 	}while(*str != '\0');
 }
 
-void lcd_set_cursor(uint8_t col, uint8_t row)
+void lcd_set_cursor(int8_t col, int8_t row)
 {
 	int row_offsets[] = {0x00, 0x40, 0x14, 0x54};
 	if (row > _numlines) {

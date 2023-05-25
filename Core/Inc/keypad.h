@@ -13,8 +13,8 @@
 #include "stdio.h"
 
 #define LOW_KEY				GPIO_PIN_1
-#define MED_KEY				GPIO_PIN_11
-#define HIGH_KEY			GPIO_PIN_10
+#define MED_KEY				GPIO_PIN_10
+#define HIGH_KEY			GPIO_PIN_11
 #define FN_KEY				GPIO_PIN_0
 
 #define KEYPAD_PORT			GPIOB

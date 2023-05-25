@@ -90,6 +90,6 @@ void lcd_leftToRight(void);
 void lcd_rightToLeft(void);
 void lcd_autoscroll(uint8_t state);
 void lcd_print(char *str);
-void lcd_set_cursor(uint8_t col, uint8_t row);
+void lcd_set_cursor(int8_t col, int8_t row);
 
 #endif /* INC_LCD_H_ */

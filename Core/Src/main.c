@@ -487,60 +487,46 @@ int main(void) {
 
 				//start Flip Flop
 				if (pasue_cunt > 0) {
-
 					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN, LOW);
 					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_RIGHT_PIN, LOW);
 
 					if (pasue_cunt <= 1) {
-
 						rot_sw_state = HAL_GPIO_ReadPin(INPUT_PORT,
 						SEL_ROT_SW);
-
 						if (rot_sw_state) {
-
 							rot_left_cunt = 30U;
 							rot_right_cunt = 0U;
-
 						} else {
-
 							if (flipflop) {
-
 								rot_left_cunt = 0U;
 								rot_right_cunt = 30U;
-
 							} else {
-
 								rot_left_cunt = 30U;
 								rot_right_cunt = 0U;
-
 							}
 						}
 					}
 				} else if (rot_left_cunt > 0) {
-
 					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN, HIGH);
 					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_RIGHT_PIN, LOW);
 					flipflop = 1;
-
 				} else if (rot_right_cunt > 0) {
-
 					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_LEFT_PIN, LOW);
 					HAL_GPIO_WritePin(OUTPUT_PORT, DRUM_RIGHT_PIN, HIGH);
 					flipflop = 0;
-
 				}
 
-				if (dryer.cycle == HEAT_CYCLE) {
-					cur_temp = (int) Max6675_Read_Temp();
+				cur_temp = (int) Max6675_Read_Temp();
 
+				if (dryer.cycle == HEAT_CYCLE && !limit_sw_open()) {
 					if (cur_temp == -1 || cur_temp == 0) {
+						HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, LOW);
+					} else if ((cur_temp > (dryer.setTemp + 2))
+							|| (cur_temp <= 0)) {
 						HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, LOW);
 					} else if ((cur_temp < (dryer.setTemp - 5))
 							&& (cur_temp > 0)) {
 						HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, HIGH);
-					} else if ((cur_temp > (dryer.setTemp + 2))
-							|| (cur_temp <= 0)) {
-						HAL_GPIO_WritePin(OUTPUT_PORT, HEATER_PIN, LOW);
 					}
 				} else {
 
@@ -650,13 +636,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		pasue_cunt--;
 	} else if (rot_left_cunt > 0) {
 		rot_left_cunt--;
-
 		if (rot_left_cunt == 0) {
-			pasue_cunt = 3U;
+			rot_sw_state = HAL_GPIO_ReadPin(INPUT_PORT,
+					SEL_ROT_SW);
+			if(rot_sw_state){
+				pasue_cunt = 0U;
+				rot_left_cunt = 30U;
+			}else pasue_cunt = 3U;
 		}
 	} else if (rot_right_cunt > 0) {
 		rot_right_cunt--;
-
 		if (rot_right_cunt == 0) {
 			pasue_cunt = 3U;
 		}
