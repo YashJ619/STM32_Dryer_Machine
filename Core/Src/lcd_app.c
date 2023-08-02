@@ -61,11 +61,11 @@ void welcome_page(void)
 		lcd_home();
 	}
 	
-	lcd_set_cursor(6, 0);
+	lcd_set_cursor(5, 0);
 	lcd_print("WELCOME!");
-	lcd_set_cursor(3,2);
+	lcd_set_cursor(-3,2);
 	lcd_print("Select a mode");
-	lcd_set_cursor(3,3);
+	lcd_set_cursor(-3,3);
 	lcd_print("to start dryer");
 }
 
@@ -167,20 +167,20 @@ void mode_level_page(void)
 	lcd_set_cursor(2, 1);
 	lcd_print(lcd_buf);
 
-	sprintf(lcd_buf,"Set Temp : %02dC",dryer.setTemp);
-	lcd_set_cursor(0, 2);
+	sprintf(lcd_buf,"SetTemp: %02dC",dryer.setTemp);
+	lcd_set_cursor(-1, 2);
 	lcd_print(lcd_buf);
 
 	//int temp = (int)Max6675_Read_Temp();
 
 	if(cur_temp == -1 || cur_temp == 0)
 	{
-		sprintf(lcd_buf,"Cur Temp : ERR");
+		sprintf(lcd_buf,"CurTemp: ERR");
 	}
 	else
 	{
-		sprintf(lcd_buf,"Cur Temp : %dC ",cur_temp);
+		sprintf(lcd_buf,"CurTemp: %dC ",cur_temp);
 	}
-	lcd_set_cursor(0, 3);
+	lcd_set_cursor(-1, 3);
 	lcd_print(lcd_buf);
 }
