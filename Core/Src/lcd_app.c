@@ -12,6 +12,7 @@
 #include "MAX6675.h"
 
 extern MachineInit_t dryer;
+extern int cur_temp;
 
 char lcd_buf[80];
 
@@ -170,17 +171,16 @@ void mode_level_page(void)
 	lcd_set_cursor(0, 2);
 	lcd_print(lcd_buf);
 
-	int temp = (int)Max6675_Read_Temp();
+	//int temp = (int)Max6675_Read_Temp();
 
-	if(temp == -1)
+	if(cur_temp == -1 || cur_temp == 0)
 	{
 		sprintf(lcd_buf,"Cur Temp : ERR");
 	}
 	else
 	{
-		sprintf(lcd_buf,"Cur Temp : %dC ",temp);
+		sprintf(lcd_buf,"Cur Temp : %dC ",cur_temp);
 	}
 	lcd_set_cursor(0, 3);
 	lcd_print(lcd_buf);
-
 }
