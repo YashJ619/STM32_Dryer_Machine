@@ -1,0 +1,4 @@
+../Core/Src/inputs.c:17:9:is_door_open	8	static
+../Core/Src/inputs.c:32:9:is_coil_open	8	static
+../Core/Src/inputs.c:47:9:limit_sw_open	8	static
+../Core/Src/inputs.c:62:9:sel_rot_pressed	8	static

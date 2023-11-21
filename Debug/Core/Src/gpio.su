@@ -1,0 +1,2 @@
+../Core/Src/gpio.c:25:6:afio_disable	24	static
+../Core/Src/gpio.c:46:6:MX_GPIO_Init	40	static

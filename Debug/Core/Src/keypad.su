@@ -1,0 +1,5 @@
+../Core/Src/keypad.c:14:9:scan_keypad	8	static
+../Core/Src/keypad.c:39:9:is_low_key_pressed	8	static
+../Core/Src/keypad.c:70:9:is_med_key_pressed	8	static
+../Core/Src/keypad.c:101:9:is_high_key_pressed	8	static
+../Core/Src/keypad.c:132:9:is_fn_key_pressed	8	static

@@ -1,0 +1,8 @@
+../Core/Src/lcd_app.c:26:6:lcd_logo	8	static
+../Core/Src/lcd_app.c:38:6:lcd_update	8	static
+../Core/Src/lcd_app.c:65:6:welcome_page	8	static
+../Core/Src/lcd_app.c:85:6:door_open_page	8	static
+../Core/Src/lcd_app.c:104:6:heater_coil_page	8	static
+../Core/Src/lcd_app.c:122:6:limit_sw_err_page	8	static
+../Core/Src/lcd_app.c:140:6:complete_page	8	static
+../Core/Src/lcd_app.c:158:6:mode_level_page	8	static
