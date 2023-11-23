@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "machine.h"
+#include "eeprom.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+uint16_t val_arr[9] = {600,300,40,1200,300,70,1800,300,90};
 MachineInit_t dryer;
 
 uint8_t door_open_flag = 0U; //Indicates Door open or close (1 for open, 0 for close)
@@ -263,10 +265,10 @@ int main(void)
 					case LOW_KEY_PRESSED:
 						dryer.state = START;
 						dryer.mode = LOW_LEVEL;
-						dryer.heatTime = 600U;
-						dryer.coolTime = 300U;
+						dryer.heatTime = val_arr[0];
+						dryer.coolTime = val_arr[1];
+						dryer.setTemp = val_arr[2];
 						dryer.beepTime = 30U;
-						dryer.setTemp = 40U;
 						dryer.cycle = HEAT_CYCLE;
 						rot_left_cunt = 30U;
 						rot_right_cunt = 0U;
@@ -281,10 +283,10 @@ int main(void)
 					case MED_KEY_PRESSED:
 						dryer.state = START;
 						dryer.mode = MED_LEVEL;
-						dryer.heatTime = 1200U;
-						dryer.coolTime = 300U;
+						dryer.heatTime = val_arr[3];
+						dryer.coolTime = val_arr[4];
+						dryer.setTemp = val_arr[5];
 						dryer.beepTime = 30U;
-						dryer.setTemp = 70U;
 						dryer.cycle = HEAT_CYCLE;
 						rot_left_cunt = 30U;
 						rot_right_cunt = 0U;
@@ -299,10 +301,10 @@ int main(void)
 					case HIGH_KEY_PRESSED:
 						dryer.state = START;
 						dryer.mode = HIGH_LEVEL;
-						dryer.heatTime = 1800U;
-						dryer.coolTime = 300U;
+						dryer.heatTime = val_arr[6];
+						dryer.coolTime = val_arr[7];
+						dryer.setTemp = val_arr[8];
 						dryer.beepTime = 30U;
-						dryer.setTemp = 90U;
 						dryer.cycle = HEAT_CYCLE;
 						rot_left_cunt = 30U;
 						rot_right_cunt = 0U;

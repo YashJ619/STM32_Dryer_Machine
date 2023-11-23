@@ -6,6 +6,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Core/Src/MAX6675.c \
+../Core/Src/eeprom.c \
 ../Core/Src/gpio.c \
 ../Core/Src/inputs.c \
 ../Core/Src/keypad.c \
@@ -25,6 +26,7 @@ C_SRCS += \
 
 OBJS += \
 ./Core/Src/MAX6675.o \
+./Core/Src/eeprom.o \
 ./Core/Src/gpio.o \
 ./Core/Src/inputs.o \
 ./Core/Src/keypad.o \
@@ -44,6 +46,7 @@ OBJS += \
 
 C_DEPS += \
 ./Core/Src/MAX6675.d \
+./Core/Src/eeprom.d \
 ./Core/Src/gpio.d \
 ./Core/Src/inputs.d \
 ./Core/Src/keypad.d \
@@ -69,7 +72,7 @@ Core/Src/%.o Core/Src/%.su: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/MAX6675.d ./Core/Src/MAX6675.o ./Core/Src/MAX6675.su ./Core/Src/gpio.d ./Core/Src/gpio.o ./Core/Src/gpio.su ./Core/Src/inputs.d ./Core/Src/inputs.o ./Core/Src/inputs.su ./Core/Src/keypad.d ./Core/Src/keypad.o ./Core/Src/keypad.su ./Core/Src/lcd.d ./Core/Src/lcd.o ./Core/Src/lcd.su ./Core/Src/lcd_app.d ./Core/Src/lcd_app.o ./Core/Src/lcd_app.su ./Core/Src/machine.d ./Core/Src/machine.o ./Core/Src/machine.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/output.d ./Core/Src/output.o ./Core/Src/output.su ./Core/Src/spi.d ./Core/Src/spi.o ./Core/Src/spi.su ./Core/Src/stm32f1xx_hal_msp.d ./Core/Src/stm32f1xx_hal_msp.o ./Core/Src/stm32f1xx_hal_msp.su ./Core/Src/stm32f1xx_it.d ./Core/Src/stm32f1xx_it.o ./Core/Src/stm32f1xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f1xx.d ./Core/Src/system_stm32f1xx.o ./Core/Src/system_stm32f1xx.su ./Core/Src/tim.d ./Core/Src/tim.o ./Core/Src/tim.su ./Core/Src/usart.d ./Core/Src/usart.o ./Core/Src/usart.su
+	-$(RM) ./Core/Src/MAX6675.d ./Core/Src/MAX6675.o ./Core/Src/MAX6675.su ./Core/Src/eeprom.d ./Core/Src/eeprom.o ./Core/Src/eeprom.su ./Core/Src/gpio.d ./Core/Src/gpio.o ./Core/Src/gpio.su ./Core/Src/inputs.d ./Core/Src/inputs.o ./Core/Src/inputs.su ./Core/Src/keypad.d ./Core/Src/keypad.o ./Core/Src/keypad.su ./Core/Src/lcd.d ./Core/Src/lcd.o ./Core/Src/lcd.su ./Core/Src/lcd_app.d ./Core/Src/lcd_app.o ./Core/Src/lcd_app.su ./Core/Src/machine.d ./Core/Src/machine.o ./Core/Src/machine.su ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/output.d ./Core/Src/output.o ./Core/Src/output.su ./Core/Src/spi.d ./Core/Src/spi.o ./Core/Src/spi.su ./Core/Src/stm32f1xx_hal_msp.d ./Core/Src/stm32f1xx_hal_msp.o ./Core/Src/stm32f1xx_hal_msp.su ./Core/Src/stm32f1xx_it.d ./Core/Src/stm32f1xx_it.o ./Core/Src/stm32f1xx_it.su ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32f1xx.d ./Core/Src/system_stm32f1xx.o ./Core/Src/system_stm32f1xx.su ./Core/Src/tim.d ./Core/Src/tim.o ./Core/Src/tim.su ./Core/Src/usart.d ./Core/Src/usart.o ./Core/Src/usart.su
 
 .PHONY: clean-Core-2f-Src
 
