@@ -13,6 +13,7 @@
 
 typedef enum{
 		INIT_PAGE,
+		SETTING_PAGE,
 		LOW_LEVEL_PAGE,
 		MED_LEVEL_PAGE,
 		HIGH_LEVEL_PAGE,
